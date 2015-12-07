@@ -6,6 +6,7 @@ package filepage
 
 import (
 	"errors"
+	"io"
 	"os"
 )
 
@@ -82,7 +83,7 @@ func (s *Scanner) ReadPage() bool {
 	}
 	_, err := s.fd.ReadAt(s.pageBuffer, nextOffset)
 
-	if err != nil {
+	if err != nil && err != io.EOF {
 		s.err = err
 		return false
 	}

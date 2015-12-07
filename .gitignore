@@ -23,5 +23,5 @@ _testmain.go
 *.test
 *.prof
 
-databases/*
+test_databases/*
 .vscode/
