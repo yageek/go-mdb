@@ -1,6 +1,12 @@
 package pages
 
-import "errors"
+import (
+	"encoding/hex"
+	"errors"
+	"fmt"
+
+	"github.com/yageek/go-mdb/util"
+)
 
 var (
 	ErrInvalidVersionConstant = errors.New("Invalid version constant")
@@ -8,21 +14,32 @@ var (
 
 // Page offset
 const (
-	VersionOffset      int64 = 0x14
-	CodeOffset               = 0x3c
-	TextOrderOffset          = 0x3a
-	KeyOffset                = 0x3e
-	PasswordOffset           = 0x42
-	PasswordMaskOffset       = 0x72
+	VersionOffset       int = 0x14
+	CodeOffset              = 0x3c
+	Jet3TextOrderOffset     = 0x3a
+	Jet4TextOrderOffset     = 0x6e
+	KeyOffset               = 0x3e
+	PasswordOffset          = 0x42
+	PasswordMaskOffset      = 0x72
 
-	Jet3 int = 0x00
-	Jet4     = 0x01
+	CodeLength = 2
+	KeyLength  = 4
+
+	Jet3PasswordLength  = 20
+	Jet3TextOrderLength = 2
+
+	Jet4PasswordLength           = 20
+	Jet4PasswordMaskOffsetLength = 8
+	Jet4TextOrderLength          = 4
+
+	Jet3 byte = 0x00
+	Jet4      = 0x01
 )
 
 // DefinitionPage represents
 // the table definition page
 type DefinitionPage struct {
-	version      int
+	version      byte
 	password     []byte
 	passwordMask []byte
 	key          []byte
@@ -30,20 +47,58 @@ type DefinitionPage struct {
 	textOrder    []byte
 }
 
+func (d *DefinitionPage) String() string {
+
+	s := "Definition Page:\n"
+	s += fmt.Sprintf("Version byte: 0x%x\n", d.version)
+	s += fmt.Sprintf("Password:\n%v\n", hex.Dump(d.password))
+	s += fmt.Sprintf("Password Mask:\n%v\n", hex.Dump(d.passwordMask))
+	s += fmt.Sprintf("Key:\n%v\n", hex.Dump(d.key))
+	s += fmt.Sprintf("Code:\n%v\n", hex.Dump(d.code))
+	s += fmt.Sprintf("Text order:\n%v\n", hex.Dump(d.textOrder))
+	return s
+}
+
 // NewDefinitionPage creates a new definition page
 // from a buffer of bytes
-func NewDefinitionPage(page []byte) (*DefinitionPage, error) {
+func NewDefinitionPage(page []byte, version byte) (*DefinitionPage, error) {
 
-	pageCode := int(page[0])
-	if pageCode != DatabaseDefinitionCode {
+	if !isPageCodeValid(page, DatabaseDefinitionCode) {
 		return nil, ErrInvalidPageCode
 	}
 
-	version := int(page[VersionOffset])
-
-	if version != Jet3 && version != Jet4 {
+	if page[VersionOffset] != version {
 		return nil, ErrInvalidVersionConstant
 	}
 
-	return &DefinitionPage{version: version}, nil
+	definitionPage := new(DefinitionPage)
+
+	definitionPage.version = version
+
+	// Read password
+	if version == Jet3 {
+		util.DecodeBytes(page, &definitionPage.password, PasswordOffset, Jet3PasswordLength)
+	} else if version == Jet4 {
+		util.DecodeBytes(page, &definitionPage.password, PasswordOffset, Jet4PasswordLength)
+	}
+
+	// Password Jet4 if needed
+	if version == Jet4 {
+		util.DecodeBytes(page, &definitionPage.passwordMask, PasswordMaskOffset, Jet4PasswordMaskOffsetLength)
+	}
+
+	// Code
+	util.DecodeBytes(page, &definitionPage.code, CodeOffset, CodeLength)
+
+	// Text Order
+	if version == Jet3 {
+		util.DecodeBytes(page, &definitionPage.textOrder, Jet3TextOrderOffset, Jet3TextOrderLength)
+	} else if version == Jet4 {
+		util.DecodeBytes(page, &definitionPage.textOrder, Jet4TextOrderOffset, Jet4TextOrderLength)
+	}
+
+	// Key
+	util.DecodeBytes(page, &definitionPage.key, KeyOffset, KeyLength)
+
+	return definitionPage, nil
 }
