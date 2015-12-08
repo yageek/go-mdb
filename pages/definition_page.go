@@ -15,13 +15,12 @@ var (
 
 // Page offset
 const (
-	VersionOffset       int = 0x14
-	CodeOffset              = 0x3c
-	Jet3TextOrderOffset     = 0x3a
-	Jet4TextOrderOffset     = 0x6e
-	KeyOffset               = 0x3e
-	PasswordOffset          = 0x42
-	PasswordMaskOffset      = 0x72
+	CodeOffset          = 0x3c
+	Jet3TextOrderOffset = 0x3a
+	Jet4TextOrderOffset = 0x6e
+	KeyOffset           = 0x3e
+	PasswordOffset      = 0x42
+	PasswordMaskOffset  = 0x72
 
 	CodeLength = 2
 	KeyLength  = 4
@@ -65,7 +64,7 @@ func NewDefinitionPage(page []byte, v version.JetVersion) (*DefinitionPage, erro
 		return nil, ErrInvalidPageCode
 	}
 
-	if page[VersionOffset] != v.MagicNumber() {
+	if page[version.VersionOffset] != v.MagicNumber() {
 		return nil, ErrInvalidVersionConstant
 	}
 

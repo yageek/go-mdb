@@ -12,3 +12,7 @@ type Entry struct {
 	kind             EntryKind
 	relatedPageIndex int64
 }
+
+func NewEntry(pageIndex int64, kind EntryKind, name string) *Entry {
+	return &Entry{relatedPageIndex: pageIndex, kind: kind, name: name}
+}

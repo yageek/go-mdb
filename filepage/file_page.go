@@ -52,8 +52,8 @@ func NewScanner(file *os.File, pageSize int64) (*Scanner, error) {
 }
 
 // Close release the opened file
-func (s *Scanner) Close() {
-	s.fd.Close()
+func (s *Scanner) Close() error {
+	return s.fd.Close()
 }
 
 // PagesNumber the number of pages
@@ -61,16 +61,9 @@ func (s *Scanner) PagesNumber() int64 {
 	return s.fdSize / s.pageSize
 }
 
-// ReadPage reads the nect page into the buffer
-func (s *Scanner) ReadPage() bool {
+func (s *Scanner) ReadPageAtIndex(index int64) bool {
 
-	var nextPage int64
-
-	if s.currentPage >= 0 {
-		nextPage = s.currentPage + 1
-	}
-
-	nextOffset := nextPage * s.pageSize
+	nextOffset := index * s.pageSize
 
 	if (nextOffset + s.pageSize) > s.fdSize {
 		return false
@@ -82,9 +75,21 @@ func (s *Scanner) ReadPage() bool {
 		return false
 	}
 
-	s.currentPage = nextPage
-
+	s.currentPage = index
 	return true
+
+}
+
+// ReadPage reads the nect page into the buffer
+func (s *Scanner) ReadPage() bool {
+
+	var nextPage int64
+
+	if s.currentPage >= 0 {
+		nextPage = s.currentPage + 1
+	}
+
+	return s.ReadPageAtIndex(nextPage)
 }
 
 // Page gives the current page value
