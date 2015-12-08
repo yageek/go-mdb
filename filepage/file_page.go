@@ -100,8 +100,15 @@ func (s *Scanner) Page() []byte {
 	return cp
 }
 
+// CurrentOffset returns the current
+// offset.
 func (s *Scanner) CurrentOffset() int64 {
 	return s.currentPage * s.pageSize
+}
+
+// CurrentPageIndex returns the current page
+func (s *Scanner) CurrentPageIndex() int64 {
+	return s.currentPage
 }
 
 // Error returns the error occured during the reading

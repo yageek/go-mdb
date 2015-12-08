@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-func DecodeValue(page []byte, offset int, a interface{}) error {
+func DecodeValue(page []byte, offset int, a interface{}, order binary.ByteOrder) error {
 
 	size := binary.Size(a)
 	if size == -1 {
@@ -15,7 +15,7 @@ func DecodeValue(page []byte, offset int, a interface{}) error {
 
 	buff := page[offset : offset+size]
 
-	err := binary.Read(bytes.NewBuffer(buff), binary.LittleEndian, a)
+	err := binary.Read(bytes.NewBuffer(buff), order, a)
 
 	return err
 }

@@ -1,7 +1,6 @@
 package pages
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/yageek/go-mdb/filepage"
@@ -33,8 +32,21 @@ func TestDataPage(t *testing.T) {
 	}
 
 	if pageData == nil {
-		t.Errorf("Expected non nil page data")
+		t.Error("Expected non nil page data")
 	}
-	fmt.Println(pageData)
+
+	if pageData.freeSpaceSize != 0x0cc0 {
+		t.Errorf("Wrong page file size. Expected 0cc0 - Got:%x\n", pageData.freeSpaceSize)
+		return
+	}
+
+	if pageData.pageDefinitionAddress != 1 {
+		t.Errorf("Wrong page file size. Expected 1 - Got:%d\n", pageData.pageDefinitionAddress)
+		return
+	}
+	if pageData.recordNum != 2 {
+		t.Errorf("Wrong page file size. Expected 2 - Got:%d\n", pageData.recordNum)
+		return
+	}
 
 }
