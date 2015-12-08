@@ -1,18 +1,28 @@
 package pages
 
 import (
+	"os"
 	"testing"
 
 	"github.com/yageek/go-mdb/filepage"
+	"github.com/yageek/go-mdb/version"
 )
 
 func TestDataPage(t *testing.T) {
-	scanner, err := filepage.NewScanner(jet4DatabasePath, Jet4PageSize)
+
+	file, err := os.Open(jet4DatabasePath)
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+
+	scanner, err := filepage.NewScanner(file, Jet4PageSize)
 
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
+	defer scanner.Close()
 
 	scanner.ReadPage()
 
@@ -25,7 +35,7 @@ func TestDataPage(t *testing.T) {
 		return
 	}
 
-	pageData, err := NewDataPageHeader(page, Jet4)
+	pageData, err := NewDataPageHeader(page, version.Jet4)
 	if err != nil {
 		t.Error(err.Error())
 		return

@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/yageek/go-mdb/util"
+	"github.com/yageek/go-mdb/version"
 )
 
 var (
@@ -31,15 +32,12 @@ const (
 	Jet4PasswordLength           = 20
 	Jet4PasswordMaskOffsetLength = 8
 	Jet4TextOrderLength          = 4
-
-	Jet3 byte = 0x00
-	Jet4      = 0x01
 )
 
 // DefinitionPage represents
 // the table definition page
 type DefinitionPage struct {
-	version      byte
+	version      version.JetVersion
 	password     []byte
 	passwordMask []byte
 	key          []byte
@@ -61,29 +59,29 @@ func (d *DefinitionPage) String() string {
 
 // NewDefinitionPage creates a new definition page
 // from a buffer of bytes
-func NewDefinitionPage(page []byte, version byte) (*DefinitionPage, error) {
+func NewDefinitionPage(page []byte, v version.JetVersion) (*DefinitionPage, error) {
 
 	if !isPageCodeValid(page, DatabaseDefinitionCode) {
 		return nil, ErrInvalidPageCode
 	}
 
-	if page[VersionOffset] != version {
+	if page[VersionOffset] != v.MagicNumber() {
 		return nil, ErrInvalidVersionConstant
 	}
 
 	definitionPage := new(DefinitionPage)
 
-	definitionPage.version = version
+	definitionPage.version = v
 
 	// Read password
-	if version == Jet3 {
+	if v == version.Jet3 {
 		util.DecodeBytes(page, &definitionPage.password, PasswordOffset, Jet3PasswordLength)
-	} else if version == Jet4 {
+	} else if v == version.Jet4 {
 		util.DecodeBytes(page, &definitionPage.password, PasswordOffset, Jet4PasswordLength)
 	}
 
 	// Password Jet4 if needed
-	if version == Jet4 {
+	if v == version.Jet4 {
 		util.DecodeBytes(page, &definitionPage.passwordMask, PasswordMaskOffset, Jet4PasswordMaskOffsetLength)
 	}
 
@@ -91,9 +89,9 @@ func NewDefinitionPage(page []byte, version byte) (*DefinitionPage, error) {
 	util.DecodeBytes(page, &definitionPage.code, CodeOffset, CodeLength)
 
 	// Text Order
-	if version == Jet3 {
+	if v == version.Jet3 {
 		util.DecodeBytes(page, &definitionPage.textOrder, Jet3TextOrderOffset, Jet3TextOrderLength)
-	} else if version == Jet4 {
+	} else if v == version.Jet4 {
 		util.DecodeBytes(page, &definitionPage.textOrder, Jet4TextOrderOffset, Jet4TextOrderLength)
 	}
 

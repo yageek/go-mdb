@@ -1,20 +1,19 @@
 package pages
 
-import (
-	"fmt"
-	"testing"
-
-	"github.com/yageek/go-mdb/filepage"
-)
-
 const (
 	jet4DatabasePath = "../test_databases/EPSG_v8_6.mdb"
 	jet3DatabasePath = "../test_databases/Books_be.mdb"
 )
 
+/*
 func TestAllJet4Database(t *testing.T) {
 
-	scanner, err := filepage.NewScanner(jet4DatabasePath, Jet4PageSize)
+	file, err := os.Open(jet4DatabasePath)
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+	scanner, err := filepage.NewScanner(file, Jet4PageSize)
 
 	if err != nil {
 		t.Error(err.Error())
@@ -55,4 +54,4 @@ func TestAllJet4Database(t *testing.T) {
 		return
 	}
 
-}
+}*/

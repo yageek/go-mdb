@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/yageek/go-mdb/util"
+	"github.com/yageek/go-mdb/version"
 )
 
 // Datapage holds information
@@ -33,7 +34,7 @@ type DatapageHeader struct {
 }
 
 // NewDataPageHeader returns a new datapage header from page
-func NewDataPageHeader(page []byte, version byte) (*DatapageHeader, error) {
+func NewDataPageHeader(page []byte, version version.JetVersion) (*DatapageHeader, error) {
 
 	if page[0] != DataPageCode {
 		return nil, ErrInvalidPageCode
@@ -57,10 +58,10 @@ func (h *DatapageHeader) String() string {
 	return s
 }
 
-func (h *DatapageHeader) readHeaderValues(page []byte, version byte) error {
+func (h *DatapageHeader) readHeaderValues(page []byte, v version.JetVersion) error {
 
 	var headerNumOffset int
-	if version == Jet3 {
+	if v == version.Jet3 {
 		headerNumOffset = Jet3HeaderNumRowsOffset
 	} else {
 		headerNumOffset = Jet4HeaderNumRowsOffset
