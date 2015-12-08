@@ -95,10 +95,13 @@ func (s *Scanner) ReadPage() bool {
 
 // Page gives the current page value
 func (s *Scanner) Page() []byte {
-
 	cp := make([]byte, len(s.pageBuffer))
 	copy(cp, s.pageBuffer)
 	return cp
+}
+
+func (s *Scanner) CurrentOffset() int64 {
+	return s.currentPage * s.pageSize
 }
 
 // Error returns the error occured during the reading
