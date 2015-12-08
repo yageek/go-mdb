@@ -30,9 +30,9 @@ type Scanner struct {
 }
 
 // NewScanner returns new scanner for the specified file and pageSize
-func NewScanner(filename string, pageSize int64) (*Scanner, error) {
+func NewScanner(file *os.File, pageSize int64) (*Scanner, error) {
 
-	fileInfo, err := os.Stat(filename)
+	fileInfo, err := os.Stat(file.Name())
 
 	if err != nil {
 		return nil, err
@@ -40,12 +40,6 @@ func NewScanner(filename string, pageSize int64) (*Scanner, error) {
 
 	if !fileInfo.Mode().IsRegular() {
 		return nil, ErrorInvalidFile
-	}
-
-	file, err := os.Open(filename)
-
-	if err != nil {
-		return nil, err
 	}
 
 	return &Scanner{

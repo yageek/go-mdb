@@ -1,6 +1,7 @@
 package filepage
 
 import (
+	"os"
 	"testing"
 
 	"github.com/yageek/go-mdb/pages"
@@ -11,21 +12,15 @@ const (
 	jet3DatabasePath = "../test_databases/Books_be.mdb"
 )
 
-func TestNewScanner(t *testing.T) {
+func helperValidPageCount(filename string, pageSize int64, t *testing.T) {
 
-	scanner, err := NewScanner(jet4DatabasePath, pages.Jet4PageSize)
+	file, err := os.Open(filename)
 
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
-
-	defer scanner.Close()
-
-}
-
-func helperValidPageCount(filename string, pageSize int64, t *testing.T) {
-	scanner, err := NewScanner(filename, pageSize)
+	scanner, err := NewScanner(file, pageSize)
 
 	if err != nil {
 		t.Error(err.Error())
