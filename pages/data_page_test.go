@@ -13,14 +13,14 @@ func TestDataPage(t *testing.T) {
 	file, err := os.Open(jet4DatabasePath)
 	if err != nil {
 		t.Error(err.Error())
-		return
+		t.FailNow()
 	}
 
 	scanner, err := filepage.NewScanner(file, Jet4PageSize)
 
 	if err != nil {
 		t.Error(err.Error())
-		return
+		t.FailNow()
 	}
 	defer scanner.Close()
 
@@ -32,31 +32,31 @@ func TestDataPage(t *testing.T) {
 
 	if err := scanner.Error(); err != nil {
 		t.Error(err.Error())
-		return
+		t.FailNow()
 	}
 
 	pageData, err := NewDataPageHeader(page, version.Jet4)
 	if err != nil {
 		t.Error(err.Error())
-		return
+		t.FailNow()
 	}
 
 	if pageData == nil {
 		t.Error("Expected non nil page data")
 	}
 
-	if pageData.freeSpaceSize != 0x0cc0 {
-		t.Errorf("Wrong page file size. Expected 0cc0 - Got:%x\n", pageData.freeSpaceSize)
-		return
+	if pageData.FreeSpace() != 0x0cc0 {
+		t.Errorf("Wrong page file size. Expected 0cc0 - Got:%x\n", pageData.FreeSpace())
+		t.FailNow()
 	}
 
-	if pageData.pageDefinitionAddress != 1 {
-		t.Errorf("Wrong page file size. Expected 1 - Got:%d\n", pageData.pageDefinitionAddress)
-		return
+	if pageData.PagePointer() != 1 {
+		t.Errorf("Wrong page file size. Expected 1 - Got:%d\n", pageData.PagePointer())
+		t.FailNow()
 	}
-	if pageData.recordNum != 2 {
-		t.Errorf("Wrong page file size. Expected 2 - Got:%d\n", pageData.recordNum)
-		return
+	if pageData.RowsCount() != 2 {
+		t.Errorf("Wrong page file size. Expected 2 - Got:%d\n", pageData.RowsCount())
+		t.FailNow()
 	}
 
 }

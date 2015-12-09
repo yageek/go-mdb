@@ -26,15 +26,28 @@ type TableDefinitionHeader struct {
 	nextTableDefinitionAddress int64
 }
 
-type TableDefinitionBlock struct {
-	dataLength        uint64
-	rowsNum           uint64
-	autonumber        uint64
+type Jet3TableDefinitionBlock struct {
+	dataLength        uint32
+	rowsNum           uint32
+	autonumber        uint32
 	tableType         uint8
 	maxColumns        uint16
 	varColumnCount    uint16
 	columnsCount      uint16
-	logicalIndexCount uint64
-	indexEntriesCount uint64
-	freePagesAddress  uint64
+	logicalIndexCount uint32
+	indexEntriesCount uint32
+	freePagesAddress  uint32
+}
+
+type Jet4TableDefinitionBlock struct {
+	dataLength        uint32
+	rowsNum           uint32
+	autonumber        uint32
+	tableType         uint8
+	maxColumns        uint16
+	varColumnCount    uint16
+	columnsCount      uint16
+	logicalIndexCount uint32
+	indexEntriesCount uint32
+	freePagesAddress  uint32
 }

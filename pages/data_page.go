@@ -1,10 +1,9 @@
 package pages
 
 import (
+	"bytes"
 	"encoding/binary"
-	"fmt"
 
-	"github.com/yageek/go-mdb/util"
 	"github.com/yageek/go-mdb/version"
 )
 
@@ -25,63 +24,59 @@ const (
 	Jet4HeaderNumRowsOffset = 0x0c
 )
 
-// DatapageHeader represents a generic
-// data page header
-type DatapageHeader struct {
-	freeSpaceSize         uint16
-	pageDefinitionAddress uint32
-	recordNum             uint16
+type Jet3DatapageHeader struct {
+	Kind    byte
+	_       byte
+	Space   uint16
+	Pointer int64
+	Count   uint16
+}
+
+func (j *Jet3DatapageHeader) PageKind() byte     { return j.Kind }
+func (j *Jet3DatapageHeader) FreeSpace() uint16  { return j.Space }
+func (j *Jet3DatapageHeader) PagePointer() int64 { return j.Pointer }
+func (j *Jet3DatapageHeader) RowsCount() uint16  { return j.Count }
+
+type Jet4DatapageHeader struct {
+	Kind    byte
+	_       byte
+	Space   uint16
+	Pointer int64
+	_       [4]byte
+	Count   uint16
+}
+
+func (j *Jet4DatapageHeader) PageKind() byte     { return j.Kind }
+func (j *Jet4DatapageHeader) FreeSpace() uint16  { return j.Space }
+func (j *Jet4DatapageHeader) PagePointer() int64 { return j.Pointer }
+func (j *Jet4DatapageHeader) RowsCount() uint16  { return j.Count }
+
+type DatapageHeader interface {
+	PageKind() byte
+	FreeSpace() uint16
+	PagePointer() int64
+	RowsCount() uint16
 }
 
 // NewDataPageHeader returns a new datapage header from page
-func NewDataPageHeader(page []byte, version version.JetVersion) (*DatapageHeader, error) {
+func NewDataPageHeader(page []byte, v version.JetVersion) (DatapageHeader, error) {
 
-	if page[0] != DataPageCode {
-		return nil, ErrInvalidPageCode
+	buff := bytes.NewReader(page)
+	var header DatapageHeader
+
+	if v == version.Jet3 {
+		header = new(Jet3DatapageHeader)
+	} else {
+		header = new(Jet4DatapageHeader)
 	}
-
-	header := new(DatapageHeader)
-	err := header.readHeaderValues(page, version)
+	err := binary.Read(buff, binary.LittleEndian, header)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return header, err
-}
-
-func (h *DatapageHeader) String() string {
-	s := "Data Page Header:\n"
-	s += fmt.Sprintf("\tFree Space:%d\n", h.freeSpaceSize)
-	s += fmt.Sprintf("\tTDEF Address(hex):%x\n", h.pageDefinitionAddress)
-	s += fmt.Sprintf("\tRecord num:%d\n", h.recordNum)
-	return s
-}
-
-func (h *DatapageHeader) readHeaderValues(page []byte, v version.JetVersion) error {
-
-	var headerNumOffset int
-	if v == version.Jet3 {
-		headerNumOffset = Jet3HeaderNumRowsOffset
-	} else {
-		headerNumOffset = Jet4HeaderNumRowsOffset
+	if header.PageKind() != v.MagicNumber() {
+		return nil, ErrInvalidPageCode
 	}
-
-	lookupValues := map[int]interface{}{
-		HeaderFreeSpaceOffset:              &h.freeSpaceSize,
-		HeaderTableDefinitionPointerOffset: &h.pageDefinitionAddress,
-		headerNumOffset:                    &h.recordNum,
-	}
-
-	for offset, address := range lookupValues {
-
-		err := util.DecodeValue(page, offset, address, binary.LittleEndian)
-
-		if err != nil {
-			return err
-
-		}
-	}
-
-	return nil
+	return header, nil
 }
