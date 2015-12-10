@@ -261,7 +261,7 @@ type DataPage struct {
 	definitionBlock  TableDefinitionBlock
 	indexes          []JetRealIndex
 	columnsProperty  []ColumnProperties
-	columnsName      []string
+	columnNames      []string
 }
 
 func NewDataPage(page []byte, v version.JetVersion) (*DataPage, error) {
@@ -334,5 +334,42 @@ func NewDataPage(page []byte, v version.JetVersion) (*DataPage, error) {
 		columProperties = append(columProperties, column)
 	}
 
-	return &DataPage{definitionHeader: header, definitionBlock: definitionBlock, indexes: indexes, columnsProperty: columProperties}, nil
+	// Read columns name
+	var columnNames []string = make([]string, definitionBlock.ColumnsCount())
+	var lengthBuffer []byte = make([]byte, 2)
+
+	for i := uint16(0); i < definitionBlock.ColumnsCount(); i++ {
+
+		//Read length
+		_, err := buffer.Read(lengthBuffer)
+		if err != nil {
+			return nil, err
+		}
+
+		buff := bytes.NewBuffer(lengthBuffer)
+		var length uint16
+		err = binary.Read(buff, binary.LittleEndian, &length)
+
+		if err != nil {
+			return nil, err
+		}
+
+		bufferString := make([]byte, length)
+
+		_, err = buffer.Read(bufferString)
+
+		if err != nil {
+			return nil, err
+		}
+
+		columnNames[i] = string(bufferString)
+
+	}
+	return &DataPage{
+		definitionHeader: header,
+		definitionBlock:  definitionBlock,
+		indexes:          indexes,
+		columnsProperty:  columProperties,
+		columnNames:      columnNames,
+	}, nil
 }
