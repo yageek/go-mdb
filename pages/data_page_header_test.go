@@ -67,14 +67,14 @@ func TestDataPage(t *testing.T) {
 		t.FailNow()
 	}
 
-	rawBlock := scanner.Page()[8:]
+	page = scanner.Page()
 
-	blockDefinition, err := NewDefinitionBlock(rawBlock, version.Jet4)
+	dataPage, err := NewDataPage(page, version.Jet4)
 
 	if err != nil {
 		t.Error(err)
 		t.FailNow()
 	}
-	_ = "breakpoint"
-	fmt.Println("Block:", blockDefinition)
+
+	fmt.Println("Page:", dataPage)
 }

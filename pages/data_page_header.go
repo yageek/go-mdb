@@ -7,13 +7,6 @@ import (
 	"github.com/yageek/go-mdb/version"
 )
 
-// Datapage holds information
-// about a data page
-type Datapage struct {
-	index  int64
-	header *DatapageHeader
-}
-
 //Offset
 const (
 	HeaderFreeSpaceOffset int = 0x02

@@ -24,16 +24,4 @@ func isPageCodeValid(page []byte, code byte) bool {
 	return page[0] == code
 }
 
-// Page is a generic interface to a page
-type Page interface {
-	PageIndex() int64
-	PageType() byte
-}
 
-type basePage struct {
-	index int64
-}
-
-func (p *basePage) PageIndex() int64 {
-	return p.index
-}
