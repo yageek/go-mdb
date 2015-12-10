@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
@@ -46,17 +47,34 @@ func TestDataPage(t *testing.T) {
 	}
 
 	if pageData.FreeSpace() != 0x0cc0 {
-		t.Errorf("Wrong page file size. Expected 0cc0 - Got:%x\n", pageData.FreeSpace())
+		t.Errorf("Wrongfree space. Expected 0cc0 - Got:%x\n", pageData.FreeSpace())
 		t.FailNow()
 	}
 
 	if pageData.PagePointer() != 1 {
-		t.Errorf("Wrong page file size. Expected 1 - Got:%d\n", pageData.PagePointer())
+		t.Errorf("Wrong pointer value. Expected 1 - Got:%d\n", pageData.PagePointer())
 		t.FailNow()
 	}
 	if pageData.RowsCount() != 2 {
-		t.Errorf("Wrong page file size. Expected 2 - Got:%d\n", pageData.RowsCount())
+		t.Errorf("Wrong rows count file size. Expected 2 - Got:%d\n", pageData.RowsCount())
 		t.FailNow()
 	}
 
+	scanner.ReadPage()
+
+	if scanner.Error() != nil {
+		t.Error(err)
+		t.FailNow()
+	}
+
+	rawBlock := scanner.Page()[8:]
+
+	blockDefinition, err := NewDefinitionBlock(rawBlock, version.Jet4)
+
+	if err != nil {
+		t.Error(err)
+		t.FailNow()
+	}
+	_ = "breakpoint"
+	fmt.Println("Block:", blockDefinition)
 }

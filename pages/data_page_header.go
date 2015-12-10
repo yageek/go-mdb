@@ -28,33 +28,33 @@ type Jet3DatapageHeader struct {
 	Kind    byte
 	_       byte
 	Space   uint16
-	Pointer int64
+	Pointer uint32
 	Count   uint16
 }
 
-func (j *Jet3DatapageHeader) PageKind() byte     { return j.Kind }
-func (j *Jet3DatapageHeader) FreeSpace() uint16  { return j.Space }
-func (j *Jet3DatapageHeader) PagePointer() int64 { return j.Pointer }
-func (j *Jet3DatapageHeader) RowsCount() uint16  { return j.Count }
+func (j *Jet3DatapageHeader) PageKind() byte      { return j.Kind }
+func (j *Jet3DatapageHeader) FreeSpace() uint16   { return j.Space }
+func (j *Jet3DatapageHeader) PagePointer() uint32 { return j.Pointer }
+func (j *Jet3DatapageHeader) RowsCount() uint16   { return j.Count }
 
 type Jet4DatapageHeader struct {
 	Kind    byte
 	_       byte
 	Space   uint16
-	Pointer int64
+	Pointer uint32
 	_       [4]byte
 	Count   uint16
 }
 
-func (j *Jet4DatapageHeader) PageKind() byte     { return j.Kind }
-func (j *Jet4DatapageHeader) FreeSpace() uint16  { return j.Space }
-func (j *Jet4DatapageHeader) PagePointer() int64 { return j.Pointer }
-func (j *Jet4DatapageHeader) RowsCount() uint16  { return j.Count }
+func (j *Jet4DatapageHeader) PageKind() byte      { return j.Kind }
+func (j *Jet4DatapageHeader) FreeSpace() uint16   { return j.Space }
+func (j *Jet4DatapageHeader) PagePointer() uint32 { return j.Pointer }
+func (j *Jet4DatapageHeader) RowsCount() uint16   { return j.Count }
 
 type DatapageHeader interface {
 	PageKind() byte
 	FreeSpace() uint16
-	PagePointer() int64
+	PagePointer() uint32
 	RowsCount() uint16
 }
 
