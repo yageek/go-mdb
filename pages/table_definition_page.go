@@ -3,6 +3,7 @@ package pages
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 
 	"github.com/yageek/go-mdb/version"
 )
@@ -71,6 +72,14 @@ type Jet3TableDefinitionBlock struct {
 	IndexEntries   uint32
 	UsedPages      uint32
 	FreePages      uint32
+}
+
+func (j *Jet3TableDefinitionBlock) String() string {
+	s := fmt.Sprintf("Length:%d\n", j.Length)
+	s += fmt.Sprintf("Rows:%d\n", j.Rows)
+	s += fmt.Sprintf("Autonumber:%d\n", j.Autonumber)
+
+	return s
 }
 
 // Implementation of TableDefinitionBlock
@@ -242,7 +251,7 @@ func NewColumnProperty(page []byte, v version.JetVersion) (ColumnProperties, err
 
 // NewDefinitionBlock creates a new definition block
 func NewDefinitionBlock(page []byte, v version.JetVersion) (TableDefinitionBlock, error) {
-	_ = "breakpoint"
+
 	if v == version.Jet4 {
 
 		definitionBlock := new(Jet4TableDefinitionBlock)

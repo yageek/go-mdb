@@ -36,30 +36,31 @@ func TestDataPage(t *testing.T) {
 		t.FailNow()
 	}
 
-	pageData, err := NewDataPageHeader(page, version.Jet4)
+	pageDataHeader, err := NewDataPageHeader(page, version.Jet4)
 	if err != nil {
 		t.Error(err.Error())
 		t.FailNow()
 	}
 
-	if pageData == nil {
+	if pageDataHeader == nil {
 		t.Error("Expected non nil page data")
 	}
 
-	if pageData.FreeSpace() != 0x0cc0 {
-		t.Errorf("Wrongfree space. Expected 0cc0 - Got:%x\n", pageData.FreeSpace())
+	if pageDataHeader.FreeSpace() != 0x0cc0 {
+		t.Errorf("Wrongfree space. Expected 0cc0 - Got:%x\n", pageDataHeader.FreeSpace())
 		t.FailNow()
 	}
 
-	if pageData.PagePointer() != 1 {
-		t.Errorf("Wrong pointer value. Expected 1 - Got:%d\n", pageData.PagePointer())
+	if pageDataHeader.PagePointer() != 1 {
+		t.Errorf("Wrong pointer value. Expected 1 - Got:%d\n", pageDataHeader.PagePointer())
 		t.FailNow()
 	}
-	if pageData.RowsCount() != 2 {
-		t.Errorf("Wrong rows count file size. Expected 2 - Got:%d\n", pageData.RowsCount())
+	if pageDataHeader.RowsCount() != 2 {
+		t.Errorf("Wrong rows count file size. Expected 2 - Got:%d\n", pageDataHeader.RowsCount())
 		t.FailNow()
 	}
 
+	fmt.Printf("Page Data header:%+v\n\n", pageDataHeader)
 	scanner.ReadPage()
 
 	if scanner.Error() != nil {
@@ -76,5 +77,7 @@ func TestDataPage(t *testing.T) {
 		t.FailNow()
 	}
 
-	fmt.Println("Page:", dataPage)
+	fmt.Printf("Page:%+v\n\n", dataPage)
+	fmt.Printf("Page Header:%+v\n\n", dataPage.definitionHeader)
+	fmt.Printf("Page Block:%+v\n\n", dataPage.definitionBlock)
 }
