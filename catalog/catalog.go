@@ -14,7 +14,7 @@ type Catalog struct {
 	jetVersion            version.JetVersion
 	scanner               *filepage.Scanner
 	definitionPage        *definition.DefinitionPage
-	mSysObjectsDefinition tabledefinition.TableDefinitionBlock
+	mSysObjectsDefinition *tabledefinition.TableDefinitionPage
 }
 
 // NewCatalog returns a new catalog object
@@ -64,7 +64,7 @@ func (c *Catalog) Read() error {
 		return nil
 	}
 
-	msysObjects, err := tabledefinition.NewDefinitionBlock(c.scanner.Page(), c.jetVersion)
+	msysObjects, err := tabledefinition.NewTableDefinitionPage(c.scanner.Page(), c.jetVersion)
 
 	if err != nil {
 		return nil

@@ -6,18 +6,19 @@ import (
 	"testing"
 
 	"github.com/yageek/go-mdb/filepage"
+	"github.com/yageek/go-mdb/test_databases"
 	"github.com/yageek/go-mdb/version"
 )
 
 func TestDataPage(t *testing.T) {
 
-	file, err := os.Open(jet4DatabasePath)
+	file, err := os.Open(testdatabases.JET4DatabasePath())
 	if err != nil {
 		t.Error(err.Error())
 		t.FailNow()
 	}
 
-	scanner, err := filepage.NewScanner(file, Jet4PageSize)
+	scanner, err := filepage.NewScanner(file, 4096)
 
 	if err != nil {
 		t.Error(err.Error())
@@ -68,16 +69,4 @@ func TestDataPage(t *testing.T) {
 		t.FailNow()
 	}
 
-	page = scanner.Page()
-
-	dataPage, err := NewDataPage(page, version.Jet4)
-
-	if err != nil {
-		t.Error(err)
-		t.FailNow()
-	}
-
-	fmt.Printf("Page:%+v\n\n", dataPage)
-	fmt.Printf("Page Header:%+v\n\n", dataPage.definitionHeader)
-	fmt.Printf("Page Block:%+v\n\n", dataPage.definitionBlock)
 }

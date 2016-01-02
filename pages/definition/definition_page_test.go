@@ -1,10 +1,5 @@
 package definition
 
-const (
-	jet4DatabasePath = "../test_databases/EPSG_v8_6.mdb"
-	jet3DatabasePath = "../test_databases/Books_be.mdb"
-)
-
 /*
 func TestAllJet4Database(t *testing.T) {
 

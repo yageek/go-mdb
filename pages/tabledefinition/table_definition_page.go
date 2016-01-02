@@ -266,7 +266,7 @@ func NewDefinitionBlock(page []byte, v version.JetVersion) (TableDefinitionBlock
 
 }
 
-type DataPage struct {
+type TableDefinitionPage struct {
 	definitionHeader *TableDefinitionHeader
 	definitionBlock  TableDefinitionBlock
 	indexes          []JetRealIndex
@@ -274,7 +274,7 @@ type DataPage struct {
 	columnNames      []string
 }
 
-func NewDataPage(page []byte, v version.JetVersion) (*DataPage, error) {
+func NewTableDefinitionPage(page []byte, v version.JetVersion) (*TableDefinitionPage, error) {
 
 	// Creates a buffer
 	buffer := bytes.NewBuffer(page)
@@ -375,7 +375,7 @@ func NewDataPage(page []byte, v version.JetVersion) (*DataPage, error) {
 		columnNames[i] = string(bufferString)
 
 	}
-	return &DataPage{
+	return &TableDefinitionPage{
 		definitionHeader: header,
 		definitionBlock:  definitionBlock,
 		indexes:          indexes,
