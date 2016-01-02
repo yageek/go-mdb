@@ -1,4 +1,4 @@
-package datapage
+package data
 
 import (
 	"bytes"

@@ -1,4 +1,4 @@
-package datapage
+package data
 
 // Jet3RowDefinition as described in documentation
 type Jet3RowDefinition struct {

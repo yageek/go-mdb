@@ -4,16 +4,17 @@ import (
 	"os"
 
 	"github.com/yageek/go-mdb/filepage"
-	"github.com/yageek/go-mdb/pages"
+	"github.com/yageek/go-mdb/pages/definition"
+	"github.com/yageek/go-mdb/pages/tabledefinition"
 	"github.com/yageek/go-mdb/version"
 )
 
 // Catalog represents the structure of the access files
 type Catalog struct {
-	jetVersion     version.JetVersion
-	scanner        *filepage.Scanner
-	definitionPage *pages.DefinitionPage
-	entries        []*Entry
+	jetVersion            version.JetVersion
+	scanner               *filepage.Scanner
+	definitionPage        *definition.DefinitionPage
+	mSysObjectsDefinition tabledefinition.TableDefinitionBlock
 }
 
 // NewCatalog returns a new catalog object
@@ -45,11 +46,7 @@ func NewCatalog(filename string) (*Catalog, error) {
 		return nil, err
 	}
 
-	return &Catalog{scanner: scanner}, nil
-}
-
-func (c *Catalog) AddEntry(entry *Entry) {
-	c.entries = append(c.entries, entry)
+	return &Catalog{scanner: scanner, jetVersion: v}, nil
 }
 
 func (c *Catalog) Read() error {
@@ -62,15 +59,18 @@ func (c *Catalog) Read() error {
 		return err
 	}
 
-	c.definitionPage, err = pages.NewDefinitionPage(c.scanner.Page(), c.jetVersion)
+	c.definitionPage, err = definition.NewDefinitionPage(c.scanner.Page(), c.jetVersion)
 	if err != nil {
 		return nil
 	}
 
-	// Add the MSysObjects entry
-	entry := NewEntry(2, TableKind, "MSysObjects")
-	c.AddEntry(entry)
+	msysObjects, err := tabledefinition.NewDefinitionBlock(c.scanner.Page(), c.jetVersion)
 
+	if err != nil {
+		return nil
+	}
+
+	c.mSysObjectsDefinition = msysObjects
 	return nil
 }
 

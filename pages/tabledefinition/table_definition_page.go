@@ -1,4 +1,4 @@
-package pages
+package tabledefinition
 
 import (
 	"bytes"

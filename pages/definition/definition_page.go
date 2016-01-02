@@ -1,18 +1,12 @@
-package definitionPage
+package definition
 
 import (
 	"encoding/hex"
-	"errors"
 	"fmt"
 
 	"github.com/yageek/go-mdb/pages"
 	"github.com/yageek/go-mdb/util"
 	"github.com/yageek/go-mdb/version"
-)
-
-// Errors
-var (
-	ErrInvalidVersionConstant = errors.New("Invalid version constant")
 )
 
 // Page offset
@@ -67,7 +61,7 @@ func NewDefinitionPage(page []byte, v version.JetVersion) (*DefinitionPage, erro
 	}
 
 	if page[version.VersionOffset] != v.MagicNumber() {
-		return nil, ErrInvalidVersionConstant
+		return nil, pages.ErrInvalidVersionConstant
 	}
 
 	definitionPage := new(DefinitionPage)

@@ -1,4 +1,4 @@
-package definitionPage
+package definition
 
 const (
 	jet4DatabasePath = "../test_databases/EPSG_v8_6.mdb"
