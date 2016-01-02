@@ -8,6 +8,7 @@ import (
 	"github.com/yageek/go-mdb/version"
 )
 
+// Catalog represents the structure of the access files
 type Catalog struct {
 	jetVersion     version.JetVersion
 	scanner        *filepage.Scanner
@@ -15,6 +16,7 @@ type Catalog struct {
 	entries        []*Entry
 }
 
+// NewCatalog returns a new catalog object
 func NewCatalog(filename string) (*Catalog, error) {
 
 	file, err := os.Open(filename)
@@ -69,6 +71,7 @@ func (c *Catalog) Read() error {
 	entry := NewEntry(2, TableKind, "MSysObjects")
 	c.AddEntry(entry)
 
+	return nil
 }
 
 func (c *Catalog) Close() error {

@@ -9,6 +9,7 @@ import (
 	"github.com/yageek/go-mdb/version"
 )
 
+// Errors
 var (
 	ErrInvalidVersionConstant = errors.New("Invalid version constant")
 )

@@ -23,5 +23,3 @@ const (
 func isPageCodeValid(page []byte, code byte) bool {
 	return page[0] == code
 }
-
-
