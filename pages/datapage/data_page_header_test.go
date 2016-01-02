@@ -1,4 +1,4 @@
-package pages
+package datapage
 
 import (
 	"fmt"

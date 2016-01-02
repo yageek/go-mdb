@@ -4,7 +4,8 @@ import "errors"
 
 // Errors relative to pages
 var (
-	ErrInvalidPageCode = errors.New("Invalid version constant")
+	ErrInvalidPageCode        = errors.New("Invalid version constant")
+	ErrInvalidVersionConstant = errors.New("Invalid version constant")
 )
 
 // Page code
@@ -20,6 +21,6 @@ const (
 	Jet4PageSize = 4096
 )
 
-func isPageCodeValid(page []byte, code byte) bool {
+func IsPageCodeValid(page []byte, code byte) bool {
 	return page[0] == code
 }

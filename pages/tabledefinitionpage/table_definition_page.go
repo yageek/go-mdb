@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 
+	"github.com/yageek/go-mdb/pages"
 	"github.com/yageek/go-mdb/version"
 )
 
@@ -261,7 +262,7 @@ func NewDefinitionBlock(page []byte, v version.JetVersion) (TableDefinitionBlock
 		return definitionBlock, err
 	}
 
-	return nil, ErrInvalidVersionConstant
+	return nil, pages.ErrInvalidVersionConstant
 
 }
 

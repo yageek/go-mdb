@@ -1,9 +1,10 @@
-package pages
+package datapage
 
 import (
 	"bytes"
 	"encoding/binary"
 
+	"github.com/yageek/go-mdb/pages"
 	"github.com/yageek/go-mdb/version"
 )
 
@@ -69,7 +70,7 @@ func NewDataPageHeader(page []byte, v version.JetVersion) (DatapageHeader, error
 	}
 
 	if header.PageKind() != v.MagicNumber() {
-		return nil, ErrInvalidPageCode
+		return nil, pages.ErrInvalidPageCode
 	}
 	return header, nil
 }
