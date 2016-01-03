@@ -19,7 +19,6 @@ type Catalog struct {
 
 // NewCatalog returns a new catalog object
 func NewCatalog(filename string) (*Catalog, error) {
-
 	file, err := os.Open(filename)
 
 	if err != nil {
@@ -63,11 +62,12 @@ func (c *Catalog) Read() error {
 	if err != nil {
 		return nil
 	}
+	c.scanner.ReadPageAtIndex(2)
 
 	msysObjects, err := tabledefinition.NewTableDefinitionPage(c.scanner.Page(), c.jetVersion)
 
 	if err != nil {
-		return nil
+		return err
 	}
 
 	c.mSysObjectsDefinition = msysObjects
