@@ -250,6 +250,40 @@ func NewColumnProperty(page []byte, v version.JetVersion) (ColumnProperties, err
 	return columnProperty, err
 }
 
+// Column Order represents
+// the bytes fields after the column properties
+type ColumnOrder struct {
+	Num   uint16
+	Order byte
+}
+
+type Jet3ColumnUsage struct {
+	UsedPages uint32
+	FirstDp   uint32
+	Flags     byte
+}
+
+func (j *Jet3ColumnUsage) ColumnUsedPages() uint32  { return j.UsedPages }
+func (j *Jet3ColumnUsage) FirstPagePointer() uint32 { return j.FirstDp }
+func (j *Jet3ColumnUsage) ColumnsFlags() byte       { return j.Flags }
+
+type Jet4ColumnUsage struct {
+	UsedPages uint32
+	FirstDp   uint32
+	Flags     byte
+	_         [9]byte
+}
+
+func (j *Jet4ColumnUsage) ColumnUsedPages() uint32  { return j.UsedPages }
+func (j *Jet4ColumnUsage) FirstPagePointer() uint32 { return j.FirstDp }
+func (j *Jet4ColumnUsage) ColumnsFlags() byte       { return j.Flags }
+
+type ColumnUsage interface {
+	ColumnUsedPages() uint32
+	FirstPagePointer() uint32
+	ColumnsFlags() byte
+}
+
 // NewDefinitionBlock creates a new definition block
 func NewDefinitionBlock(page []byte, v version.JetVersion) (TableDefinitionBlock, error) {
 
@@ -272,6 +306,8 @@ type TableDefinitionPage struct {
 	indexes          []JetRealIndex
 	columnsProperty  []ColumnProperties
 	columnNames      []string
+	columnOrders     []ColumnOrder
+	columnUsages     []ColumnUsage
 }
 
 func NewTableDefinitionPage(page []byte, v version.JetVersion) (*TableDefinitionPage, error) {
@@ -302,7 +338,7 @@ func NewTableDefinitionPage(page []byte, v version.JetVersion) (*TableDefinition
 		return nil, err
 	}
 
-	definitionBlock, err := NewDefinitionBlock(blockRaw, version.Jet4)
+	definitionBlock, err := NewDefinitionBlock(blockRaw, v)
 
 	if err != nil {
 		return nil, err
@@ -375,11 +411,24 @@ func NewTableDefinitionPage(page []byte, v version.JetVersion) (*TableDefinition
 		columnNames[i] = string(bufferString)
 
 	}
+
+	// Pass unknown byte
+	buffer.Next(int(definitionBlock.IndexEntriesCount()))
+
+	columnsOrder := make([]ColumnOrder, 10)
+	for _, order := range columnsOrder {
+		err := binary.Read(buffer, binary.LittleEndian, &order)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return &TableDefinitionPage{
 		definitionHeader: header,
 		definitionBlock:  definitionBlock,
 		indexes:          indexes,
 		columnsProperty:  columProperties,
 		columnNames:      columnNames,
+		columnOrders:     columnsOrder,
 	}, nil
 }
