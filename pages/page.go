@@ -4,7 +4,7 @@ import "errors"
 
 // Errors relative to pages
 var (
-	ErrInvalidPageCode        = errors.New("Invalid version constant")
+	ErrInvalidPageCode        = errors.New("Invalid page constant")
 	ErrInvalidVersionConstant = errors.New("Invalid version constant")
 )
 

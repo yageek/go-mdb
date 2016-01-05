@@ -287,16 +287,19 @@ type ColumnUsage interface {
 // NewDefinitionBlock creates a new definition block
 func NewDefinitionBlock(page []byte, v version.JetVersion) (TableDefinitionBlock, error) {
 
+	buff := bytes.NewBuffer(page)
+	var definitionBlock TableDefinitionBlock = nil
+
 	if v == version.Jet4 {
-
-		definitionBlock := new(Jet4TableDefinitionBlock)
-		buff := bytes.NewBuffer(page)
-		err := binary.Read(buff, binary.LittleEndian, definitionBlock)
-
-		return definitionBlock, err
+		definitionBlock = new(Jet4TableDefinitionBlock)
+	} else if v == version.Jet3 {
+		definitionBlock = new(Jet3TableDefinitionBlock)
+	} else {
+		return nil, pages.ErrInvalidVersionConstant
 	}
 
-	return nil, pages.ErrInvalidVersionConstant
+	err := binary.Read(buff, binary.LittleEndian, definitionBlock)
+	return definitionBlock, err
 
 }
 
@@ -416,11 +419,14 @@ func NewTableDefinitionPage(page []byte, v version.JetVersion) (*TableDefinition
 	buffer.Next(int(definitionBlock.IndexEntriesCount()))
 
 	columnsOrder := make([]ColumnOrder, 10)
-	for _, order := range columnsOrder {
+	for i := range columnsOrder {
+		order := ColumnOrder{}
 		err := binary.Read(buffer, binary.LittleEndian, &order)
 		if err != nil {
 			return nil, err
 		}
+
+		columnsOrder[i] = order
 	}
 
 	return &TableDefinitionPage{

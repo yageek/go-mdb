@@ -25,3 +25,4 @@ _testmain.go
 
 test_databases/*.mdb
 .vscode/
+utils/mdb-ver/mdb-ver

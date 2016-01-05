@@ -61,6 +61,8 @@ func (s *Scanner) PagesNumber() int64 {
 	return s.fdSize / s.pageSize
 }
 
+// ReadPageAtIndex reads the page at the
+// specified index
 func (s *Scanner) ReadPageAtIndex(index int64) bool {
 
 	nextOffset := index * s.pageSize
@@ -90,6 +92,13 @@ func (s *Scanner) ReadPage() bool {
 	}
 
 	return s.ReadPageAtIndex(nextPage)
+}
+
+// Rewind the scanner
+// at the beginning of the file
+func (s *Scanner) Rewind() {
+	s.currentPage = 0
+	s.pageBuffer = make([]byte, s.pageSize)
 }
 
 // Page gives the current page value

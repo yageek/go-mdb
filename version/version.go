@@ -1,3 +1,4 @@
+//go:generate stringer -type=JetVersion
 package version
 
 import "errors"
@@ -8,7 +9,7 @@ const (
 	VersionOffset = 0x14
 
 	Jet3 JetVersion = 0x00
-	Jet4            = 0x01
+	Jet4 JetVersion = 0x01
 )
 
 var (
