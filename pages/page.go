@@ -24,3 +24,8 @@ const (
 func IsPageCodeValid(page []byte, code byte) bool {
 	return page[0] == code
 }
+
+// IsDataPage tells whether the page is a DataCode Page
+func IsDataPage(page []byte) bool {
+	return IsPageCodeValid(page, DataPageCode)
+}

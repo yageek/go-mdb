@@ -1,12 +1,15 @@
 package catalog
 
 import (
-	"os"
-
+	"errors"
+	"fmt"
 	"github.com/yageek/go-mdb/filepage"
+	"github.com/yageek/go-mdb/pages"
+	"github.com/yageek/go-mdb/pages/data"
 	"github.com/yageek/go-mdb/pages/definition"
 	"github.com/yageek/go-mdb/pages/tabledefinition"
 	"github.com/yageek/go-mdb/version"
+	"os"
 )
 
 // Catalog represents the structure of the access files
@@ -74,10 +77,48 @@ func (c *Catalog) Read() error {
 	}
 
 	c.mSysObjectsDefinition = msysObjects
+	// Looks for the data pages for the MSysObjects
 
-	// Read All entries in MSysObjects table
+	dataPageIndex, err := c.nextDataPageForTDEF(0x02)
+	if err != nil {
+		return err
+	}
+
+	if !c.scanner.ReadPageAtIndex(dataPageIndex) {
+		return c.scanner.Error()
+	}
+
+	row, err := data.NewPage(c.scanner.Page(), c.jetVersion)
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Row:", row)
 
 	return nil
+}
+
+func (c *Catalog) nextDataPageForTDEF(pointer int64) (int64, error) {
+	for c.scanner.ReadPage() {
+		page := c.scanner.Page()
+		if pages.IsDataPage(page) {
+
+			header, err := data.NewDataPageHeader(page, c.jetVersion)
+
+			if err != nil {
+				fmt.Println("Could not go on")
+				break
+			}
+
+			if int64(header.PagePointer()) == pointer {
+				return c.scanner.CurrentPageIndex(), nil
+			}
+		}
+	}
+
+	msg := fmt.Sprintf("Can not find datapage for TDEF:%v\n", pointer)
+	return -1, errors.New(msg)
 }
 
 // Close closes the catalog

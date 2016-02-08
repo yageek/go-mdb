@@ -186,7 +186,7 @@ func NewRealIndex(page []byte, v version.JetVersion) (JetRealIndex, error) {
 	var index JetRealIndex
 
 	if v == version.Jet3 {
-		index = new(Jet4RealIndex)
+		index = new(Jet3RealIndex)
 	} else {
 		index = new(Jet4RealIndex)
 	}
