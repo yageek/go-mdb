@@ -23,6 +23,5 @@ _testmain.go
 *.test
 *.prof
 
-test_databases/*.mdb
 .vscode/
 utils/mdb-ver/mdb-ver
