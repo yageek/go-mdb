@@ -347,7 +347,7 @@ func NewTableDefinitionPage(page []byte, v version.JetVersion) (*TableDefinition
 		return nil, err
 	}
 
-	// Read indexes
+	// Real indexes
 	var indexes []JetRealIndex = make([]JetRealIndex, 0)
 
 	indexBuff := make([]byte, 12)

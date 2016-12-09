@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	jet4DatabasePath = "../test_databases/EPSG_v8_6.mdb"
+	jet4DatabasePath = "../test_databases/EPSG_v8_9.mdb"
 	jet3DatabasePath = "../test_databases/Books_be.mdb"
 )
 

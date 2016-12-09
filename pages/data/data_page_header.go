@@ -30,6 +30,7 @@ func (j *Jet3DatapageHeader) PageKind() byte      { return j.Kind }
 func (j *Jet3DatapageHeader) FreeSpace() uint16   { return j.Space }
 func (j *Jet3DatapageHeader) PagePointer() uint32 { return j.Pointer }
 func (j *Jet3DatapageHeader) RowsCount() uint16   { return j.Count }
+func (j *Jet3DatapageHeader) Size() int           { return 10 }
 
 type Jet4DatapageHeader struct {
 	Kind    byte
@@ -44,12 +45,14 @@ func (j *Jet4DatapageHeader) PageKind() byte      { return j.Kind }
 func (j *Jet4DatapageHeader) FreeSpace() uint16   { return j.Space }
 func (j *Jet4DatapageHeader) PagePointer() uint32 { return j.Pointer }
 func (j *Jet4DatapageHeader) RowsCount() uint16   { return j.Count }
+func (j *Jet4DatapageHeader) Size() int           { return 12 }
 
 type DatapageHeader interface {
 	PageKind() byte
 	FreeSpace() uint16
 	PagePointer() uint32
 	RowsCount() uint16
+	Size() int
 }
 
 // NewDataPageHeader returns a new datapage header from page
